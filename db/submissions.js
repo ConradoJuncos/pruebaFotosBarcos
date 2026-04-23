@@ -48,22 +48,3 @@ export async function insertSubmission(payload) {
   return row;
 }
 
-export async function listSubmissions(limit = 50) {
-  const safeLimit = Math.max(1, Math.min(Number(limit) || 50, 200));
-
-  return sql`
-    select
-      id,
-      full_name,
-      note,
-      image_name,
-      image_type,
-      image_data,
-      client_created_at,
-      received_at
-    from submissions
-    order by received_at desc
-    limit ${safeLimit}
-  `;
-}
-

@@ -21,7 +21,24 @@ function escapeHtml(value) {
 }
 
 app.use(express.json({ limit: "15mb" }));
-app.use(express.static(path.join(__dirname, "app")));
+app.use(
+  express.static(path.join(__dirname, "app"), {
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, filePath) => {
+      const fileName = path.basename(filePath);
+
+      if (fileName === "index.html" || fileName === "sw.js" || fileName === "main.js") {
+        res.setHeader("Cache-Control", "no-store, max-age=0");
+        return;
+      }
+
+      if (fileName.endsWith(".css")) {
+        res.setHeader("Cache-Control", "public, max-age=300, must-revalidate");
+      }
+    }
+  })
+);
 
 app.post("/api/upload", async (req, res) => {
   const { id, fullName, note, imageName, imageType, imageData, createdAt } = req.body ?? {};

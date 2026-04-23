@@ -226,9 +226,44 @@ window.addEventListener("offline", () => {
 });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js").catch(() => {
-    setStatus("No se pudo registrar el modo offline avanzado.", "warning");
+  let refreshing = false;
+
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshing) {
+      return;
+    }
+
+    refreshing = true;
+    window.location.reload();
   });
+
+  navigator.serviceWorker
+    .register("/sw.js", { updateViaCache: "none" })
+    .then((registration) => {
+      if (registration.waiting) {
+        registration.waiting.postMessage({ type: "SKIP_WAITING" });
+      }
+
+      registration.addEventListener("updatefound", () => {
+        const newWorker = registration.installing;
+        if (!newWorker) {
+          return;
+        }
+
+        newWorker.addEventListener("statechange", () => {
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+            newWorker.postMessage({ type: "SKIP_WAITING" });
+          }
+        });
+      });
+
+      setInterval(() => {
+        registration.update().catch(() => {});
+      }, 60 * 1000);
+    })
+    .catch(() => {
+      setStatus("No se pudo registrar el modo offline avanzado.", "warning");
+    });
 }
 
 (async function init() {

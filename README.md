@@ -72,8 +72,3 @@ Abrir: `http://localhost:3000`
 
 `/api/upload` valida el payload y lo guarda en Supabase Postgres.
 
-## Endpoints GET
-
-- `GET /api/submissions`: devuelve JSON con los registros subidos (incluye `image_data`).
-- `GET /submissions`: muestra una galeria HTML con los datos y las fotos guardadas en base de datos.
-
