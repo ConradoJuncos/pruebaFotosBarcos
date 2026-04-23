@@ -1,0 +1,20 @@
+{
+  "name": "prueba-fotos-offline-prototype",
+  "version": "0.1.0",
+  "description": "Prototipo mobile-first offline para formulario con foto",
+  "type": "module",
+  "scripts": {
+    "dev": "npm run build:css && node server.js",
+    "build:css": "tailwindcss -i ./app/styles.css -o ./app/output.css --minify",
+    "watch:css": "tailwindcss -i ./app/styles.css -o ./app/output.css --watch",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "postgres": "^3.4.9"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}
